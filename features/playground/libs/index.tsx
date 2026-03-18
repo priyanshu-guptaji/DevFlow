@@ -120,3 +120,29 @@ export function getFileIcon(filePath: string): React.ReactNode {
       );
   }
 }
+import { TemplateFile, TemplateFolder } from './path-to-json';
+
+export function findFilePath(
+  file: TemplateFile,
+  folder: TemplateFolder,
+  currentPath: string = ''
+): string | null {
+  for (const item of folder.items) {
+    if ('folderName' in item) {
+      const folderPath = currentPath ? `/` : item.folderName;
+      const result = findFilePath(file, item as TemplateFolder, folderPath);
+      if (result) return result;
+    } else {
+      const f = item as TemplateFile;
+      if (f.filename === file.filename && f.fileExtension === file.fileExtension) {
+        return currentPath ? `/.` : `.`;
+      }
+    }
+  }
+  return null;
+}
+
+export function generateFileId(file: TemplateFile, folder: TemplateFolder): string {
+  const path = findFilePath(file, folder);
+  return path || `.`;
+}

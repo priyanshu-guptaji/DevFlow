@@ -36,7 +36,7 @@ import {
 import React from "react";
 import { cn } from "@/lib/utils";
 import { AIChatSidePanel } from "@/features/ai-chat/components/ai-chat-sidepanel";
-
+import { createPortal } from "react-dom";
 
 interface ToggleAIProps {
   isEnabled: boolean;
@@ -192,17 +192,22 @@ const ToggleAI: React.FC<ToggleAIProps> = ({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <AIChatSidePanel
-        isOpen={isChatOpen}
-        onClose={() => setIsChatOpen(false)}
-        onInsertCode={handleInsertCode}
-        onRunCode={handleRunCode}
-        activeFileName={activeFile?.name}
-        activeFileContent={activeFile?.content}
-        activeFileLanguage="TypeScript" // Assuming TypeScript as the language
-        cursorPosition={cursorPosition}
-        theme="dark"
-      />
+      {typeof document !== "undefined"
+        ? createPortal(
+            <AIChatSidePanel
+              isOpen={isChatOpen}
+              onClose={() => setIsChatOpen(false)}
+              onInsertCode={handleInsertCode}
+              onRunCode={handleRunCode}
+              activeFileName={activeFile?.name}
+              activeFileContent={activeFile?.content}
+              activeFileLanguage="TypeScript"
+              cursorPosition={cursorPosition}
+              theme="dark"
+            />,
+            document.body
+          )
+        : null}
     </>
   );
 };
