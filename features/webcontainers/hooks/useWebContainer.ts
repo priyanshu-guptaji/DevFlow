@@ -27,9 +27,9 @@ export const useWebContainer = ({ templateData }: UseWebContainerProps): UseWebC
     async function initializeWebContainer() {
       try {
         const webcontainerInstance = await WebContainer.boot();
-        
+
         if (!mounted) return;
-        
+
         setInstance(webcontainerInstance);
         setIsLoading(false);
       } catch (err) {

@@ -6,6 +6,8 @@ module.exports = {
     "./app/**/*.{js,ts,jsx,tsx}",       // App Router
     "./pages/**/*.{js,ts,jsx,tsx}",     // Pages Router (if used)
     "./components/**/*.{js,ts,jsx,tsx}",// Components
+    "./features/**/*.{js,ts,jsx,tsx}",  // Features
+    "./lib/**/*.{js,ts,jsx,tsx}",       // Lib utilities
     "./src/**/*.{js,ts,jsx,tsx}"        // Optional, if you use /src
   ],
   theme: {

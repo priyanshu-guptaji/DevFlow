@@ -129,13 +129,13 @@ export function findFilePath(
 ): string | null {
   for (const item of folder.items) {
     if ('folderName' in item) {
-      const folderPath = currentPath ? `/` : item.folderName;
+      const folderPath = currentPath ? `${currentPath}/${item.folderName}` : item.folderName;
       const result = findFilePath(file, item as TemplateFolder, folderPath);
       if (result) return result;
     } else {
       const f = item as TemplateFile;
       if (f.filename === file.filename && f.fileExtension === file.fileExtension) {
-        return currentPath ? `/.` : `.`;
+        return currentPath ? `${currentPath}/${f.filename}.${f.fileExtension}` : `${f.filename}.${f.fileExtension}`;
       }
     }
   }
@@ -144,5 +144,5 @@ export function findFilePath(
 
 export function generateFileId(file: TemplateFile, folder: TemplateFolder): string {
   const path = findFilePath(file, folder);
-  return path || `.`;
+  return path || `${file.filename}.${file.fileExtension}`;
 }
