@@ -123,6 +123,13 @@ export const PlaygroundEditor = ({
         freeInlineCompletions: (completions: any) => {
           console.log("freeInlineCompletions called")
         },
+        handleItemDidShow: (completions: any, item: any) => {
+          console.log("Inline completion item shown")
+        },
+        disposeInlineCompletions: (completions: any) => {
+          console.log("disposeInlineCompletions called")
+          currentSuggestionRef.current = null
+        },
       }
     },
     [suggestion, suggestionPosition],
