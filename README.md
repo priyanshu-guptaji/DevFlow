@@ -1,144 +1,279 @@
-# 🚀 DevFlow
+# DevFlow — AI-Powered Browser IDE ⚡
 
-> **DevFlow** is a modern developer workflow platform designed to streamline planning, collaboration, and execution — all in one place. From managing tasks and APIs to tracking progress and deployments, DevFlow helps teams move **from idea → production** faster and cleaner.
+DevFlow is a blazing-fast, AI-integrated web IDE that runs entirely in your browser. It combines real-time code execution, an intelligent AI assistant, and multi-stack project templates — all inside a modern developer-first interface.
 
----
-
-## ✨ Highlights
-
-* 🔄 End‑to‑end developer workflow management
-* 🧩 Modular, scalable architecture
-* 🔐 Secure authentication & role‑based access
-* ⚡ High‑performance backend with clean APIs
-* 🎨 Modern, responsive UI
-* ☁️ Cloud‑ready & production‑friendly
+Built with Next.js App Router, WebContainers, Monaco Editor, and local LLMs via Ollama, DevFlow enables you to code, run, and debug projects without leaving the browser.
 
 ---
 
-## 🛠️ Tech Stack
+# 🚀 Features
 
-### **Frontend**
+### 🔐 Authentication
 
-<p align="left">
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" height="40" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" height="40" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" height="40" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" height="40" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-plain.svg" height="40" />
-</p>
+* OAuth login using Google & GitHub
+* Secure authentication with NextAuth
+* Session-based access control
 
-### **Backend**
+### 🎨 Modern Developer UI
 
-<p align="left">
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" height="40" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" height="40" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/springboot/springboot-original.svg" height="40" />
-</p>
+* Built using TailwindCSS + ShadCN UI
+* Clean, minimal developer-first layout
+* Fully responsive design
 
-### **Database & Auth**
+### 🌗 Theme Support
 
-<p align="left">
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" height="40" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" height="40" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/json/json-original.svg" height="40" />
-</p>
+* Dark / Light mode toggle
+* System theme detection
+* Persistent user preference
 
-### **Tools & DevOps**
+### 🧱 Project Templates
 
-<p align="left">
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" height="40" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" height="40" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" height="40" />
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postman/postman-original.svg" height="40" />
-</p>
+Start instantly with pre-configured stacks:
+
+* React
+* Next.js
+* Express
+* Hono
+* Vue
+* Angular
+
+### 🗂️ File Explorer
+
+* Create files & folders
+* Rename & delete
+* Drag-and-drop support
+* Tree-based structure
+
+### 🖊️ Monaco Editor Integration
+
+* Syntax highlighting
+* IntelliSense support
+* Code formatting
+* Keyboard shortcuts
+* Multiple file tabs
+
+### 💡 AI Code Suggestions
+
+* Powered by Ollama local models
+* Offline AI completions
+* Smart code generation
+* Context-aware suggestions
+
+**Shortcuts**
+
+* Ctrl + Space → Trigger AI
+* Double Enter → Trigger AI
+* Tab → Accept suggestion
+
+### ⚙️ WebContainers Runtime
+
+* Run frontend & backend apps instantly
+* No local Node.js installation required
+* In-browser sandbox environment
+
+### 💻 Embedded Terminal
+
+* Powered by xterm.js
+* Fully interactive shell
+* Run npm, node, git commands
+* Live project output
+
+### 🤖 AI Chat Assistant
+
+* Ask coding questions
+* Refactor code
+* Debug errors
+* Explain files
+* Multi-file context support
 
 ---
 
-## 🧠 Core Features
+# 🧱 Tech Stack
 
-* 👤 **User Authentication** (JWT‑based)
-* 🛡️ **Role‑Based Access Control (RBAC)**
-* 📋 **Task & Workflow Management**
-* 🔗 **RESTful APIs**
-* 📊 **Project & Progress Tracking**
-* 🌐 **Multi‑Tenant Ready Architecture**
+| Layer          | Technology                 |
+| -------------- | -------------------------- |
+| Framework      | Next.js 15 (App Router)    |
+| Language       | TypeScript                 |
+| Styling        | TailwindCSS + ShadCN UI    |
+| Editor         | Monaco Editor              |
+| Runtime        | WebContainers              |
+| Terminal       | xterm.js                   |
+| AI             | Ollama (Local LLMs)        |
+| Authentication | NextAuth (Google + GitHub) |
+| Database       | MongoDB                    |
+| Deployment     | Vercel / Netlify           |
 
 ---
 
-```
+# 🛠️ Getting Started
 
----
-
-## ⚙️ Installation & Setup
-
-### 1️⃣ Clone the Repository
+## 1. Clone Repository
 
 ```bash
 git clone https://github.com/your-username/devflow.git
 cd devflow
 ```
 
-
-### 3️⃣ Frontend Setup
+## 2. Install Dependencies
 
 ```bash
-cd frontend
 npm install
-npm start
+```
+
+## 3. Setup Environment Variables
+
+Create `.env.local`
+
+```bash
+cp .env.example .env.local
+```
+
+Fill in values:
+
+```
+AUTH_SECRET=your_auth_secret
+
+AUTH_GOOGLE_ID=your_google_client_id
+AUTH_GOOGLE_SECRET=your_google_secret
+
+AUTH_GITHUB_ID=your_github_client_id
+AUTH_GITHUB_SECRET=your_github_secret
+
+DATABASE_URL=your_mongodb_connection_string
+
+NEXTAUTH_URL=http://localhost:3000
 ```
 
 ---
 
-## 🔐 Environment Variables
+## 4. Start Ollama Model
 
-Create a `.env` file and configure:
+Make sure Ollama (and Docker if required) is installed.
 
-```env
-DATABASE_URL=your_database_url
-JWT_SECRET=your_secret_key
-SERVER_PORT=8080
+```bash
+ollama run codellama
+```
+
+Or use any supported model:
+
+```
+codellama
+deepseek-coder
+phi
+mistral
 ```
 
 ---
 
-## 📸 Screenshots
+## 5. Run Dev Server
 
-> *Add screenshots or GIFs here to showcase UI and features.*
+```bash
+npm run dev
+```
 
----
+Open in browser:
 
-## 🚀 Future Enhancements
-
-* 📈 Advanced analytics dashboard
-* 🤖 AI‑assisted task recommendations
-* 🔔 Real‑time notifications
-* 📦 Plugin / extension system
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! 🎉
-
-1. Fork the repository
-2. Create a new branch (`feature/awesome-feature`)
-3. Commit your changes
-4. Push and open a Pull Request
+```
+http://localhost:3000
+```
 
 ---
 
-## 🧑‍💻 Author
+# 📁 Project Structure
 
-**Priyanshu Gupta**
-💼 Backend / Full‑Stack Developer
-🌐 Passionate about scalable systems & clean architecture
+```
+devflow
+│
+├── app/                # Next.js App Router
+├── components/         # UI components
+├── editor/             # Monaco + Terminal + Explorer
+├── utils/              # WebContainer + AI helpers
+├── lib/                # Utility functions
+├── public/             # Static assets
+├── styles/             # Global styles
+├── .env.example
+└── README.md
+```
 
 ---
 
-## ⭐ Support
+# ⌨️ Keyboard Shortcuts
 
-If you like this project, give it a ⭐ on GitHub — it really helps!
+| Shortcut     | Action                |
+| ------------ | --------------------- |
+| Ctrl + Space | Trigger AI suggestion |
+| Double Enter | Trigger AI            |
+| Tab          | Accept AI completion  |
+| /            | Open command palette  |
 
 ---
 
-> *Built with ❤️ to make developer workflows smoother and smarter.*
+# ✨ Roadmap
+
+* [x] OAuth Authentication
+* [x] Multiple Templates
+* [x] Monaco Editor
+* [x] AI Code Suggestions
+* [x] WebContainers Runtime
+* [x] Terminal Integration
+* [x] AI Chat Assistant
+* [ ] GitHub Repo Import
+* [ ] Save Projects to DB
+* [ ] Real-time Collaboration
+* [ ] Plugin System
+* [ ] One-click Deploy
+* [ ] Multi-file AI editing
+* [ ] Team Workspaces
+
+---
+
+# 🧠 AI Powered By
+
+* Ollama Local Models
+* CodeLlama
+* DeepSeek Coder
+* Mistral
+* Phi
+
+---
+
+# 🌍 Why DevFlow?
+
+* No setup required
+* Runs entirely in browser
+* Offline AI coding
+* Real-time execution
+* Multi-stack support
+* Developer-first UI
+
+---
+
+# 📸 Preview
+
+Add screenshots here
+
+```
+/public/preview.png
+```
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome!
+
+```bash
+fork → create branch → commit → push → PR
+```
+
+---
+
+# 📄 License
+
+MIT License
+
+---
+
+# ⭐ Support
+
+If you like DevFlow, consider giving it a star ⭐
