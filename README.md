@@ -268,9 +268,6 @@ fork → create branch → commit → push → PR
 
 ---
 
-# 📄 License
-
-MIT License
 
 ---
 
