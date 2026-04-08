@@ -63,6 +63,8 @@ const MainPlaygroundPage: React.FC = () => {
   });
 
   const [isPreviewVisible, setIsPreviewVisible] = useState(true);
+  const [cursorPosition, setCursorPosition] = useState({ line: 1, column: 1 });
+  const editorRef = useRef<any>(null);
 
   // Custom hooks
   const { playgroundData, templateData, isLoading, error, saveTemplateData } =
@@ -289,6 +291,38 @@ const MainPlaygroundPage: React.FC = () => {
     }
   };
 
+  const handleInsertCode = useCallback((code: string, fileName?: string, position?: { line: number; column: number }) => {
+    if (!editorRef.current) {
+      toast.error("Editor not ready");
+      return;
+    }
+
+    const editor = editorRef.current;
+    const pos = position || editor.getPosition();
+    
+    // Execute the edit in the editor
+    editor.executeEdits("ai-chat-insert", [
+      {
+        range: {
+          startLineNumber: pos.line || pos.lineNumber,
+          startColumn: pos.column || pos.column,
+          endLineNumber: pos.line || pos.lineNumber,
+          endColumn: pos.column || pos.column,
+        },
+        text: code,
+        forceMoveMarkers: true,
+      },
+    ]);
+    
+    toast.success("Code inserted successfully");
+  }, []);
+
+  const handleRunCode = useCallback((code: string, language: string) => {
+    toast.info(`Running code in ${language}... (Simulation)`);
+    console.log("Running code:", { code, language });
+    // In a real environment, you'd send this to the WebContainer terminal
+  }, []);
+
   // Add event to save file by click ctrl + s
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -423,6 +457,10 @@ const MainPlaygroundPage: React.FC = () => {
                   isEnabled={aiSuggestions.isEnabled}
                   onToggle={aiSuggestions.toggleEnabled}
                   suggestionLoading={aiSuggestions.isLoading}
+                  activeFile={activeFile ? { name: `${activeFile.filename}.${activeFile.fileExtension}`, content: activeFile.content } : undefined}
+                  cursorPosition={cursorPosition}
+                  onInsertCode={handleInsertCode}
+                  onRunCode={handleRunCode}
                 />
 
                 <DropdownMenu>
@@ -525,6 +563,8 @@ const MainPlaygroundPage: React.FC = () => {
                         onTriggerSuggestion={(type, editor) =>
                           aiSuggestions.fetchSuggestion(type, editor)
                         }
+                        onCursorPositionChange={setCursorPosition}
+                        onEditorMount={(editor) => (editorRef.current = editor)}
                       />
                     </ResizablePanel>
 

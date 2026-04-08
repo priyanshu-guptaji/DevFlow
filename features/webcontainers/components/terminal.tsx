@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback, forwardRef, useImperativeHandle } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import { WebLinksAddon } from "xterm-addon-web-links";
@@ -16,21 +16,23 @@ interface TerminalProps {
   className?: string;
   theme?: "dark" | "light";
   webContainerInstance?: any;
+  onReady?: (methods: { writeToTerminal: (data: string) => void }) => void;
 }
 
-// Define the methods that will be exposed through the ref
+// Define the methods that will be exposed
 export interface TerminalRef {
   writeToTerminal: (data: string) => void;
   clearTerminal: () => void;
   focusTerminal: () => void;
 }
 
-const TerminalComponent = forwardRef<TerminalRef, TerminalProps>(({ 
+const TerminalComponent = ({ 
   webcontainerUrl, 
   className,
   theme = "dark",
-  webContainerInstance
-}, ref) => {
+  webContainerInstance,
+  onReady,
+}: TerminalProps) => {
   const terminalRef = useRef<HTMLDivElement>(null);
   const term = useRef<Terminal | null>(null);
   const fitAddon = useRef<FitAddon | null>(null);
@@ -104,22 +106,18 @@ const TerminalComponent = forwardRef<TerminalRef, TerminalProps>(({
     }
   }, []);
 
-  // Expose methods through ref
-  useImperativeHandle(ref, () => ({
-    writeToTerminal: (data: string) => {
-      if (term.current) {
-        term.current.write(data);
-      }
-    },
-    clearTerminal: () => {
-      clearTerminal();
-    },
-    focusTerminal: () => {
-      if (term.current) {
-        term.current.focus();
-      }
-    },
-  }));
+  // Expose methods through ref or callback
+  useEffect(() => {
+    if (onReady && term.current) {
+      onReady({
+        writeToTerminal: (data: string) => {
+          if (term.current) {
+            term.current.write(data);
+          }
+        },
+      });
+    }
+  }, [onReady]);
 
   const executeCommand = useCallback(async (command: string) => {
     if (!webContainerInstance || !term.current) return;
@@ -503,8 +501,6 @@ const TerminalComponent = forwardRef<TerminalRef, TerminalProps>(({
       </div>
     </div>
   );
-});
-
-TerminalComponent.displayName = "TerminalComponent";
+}
 
 export default TerminalComponent;

@@ -72,6 +72,13 @@ Keep responses concise but comprehensive. Use code blocks with language specific
     if ((error as Error).name === "AbortError") {
       throw new Error("Request timeout: AI model took too long to respond")
     }
+    
+    // Check if it's a connection error (Ollama not running)
+    if ((error as any).code === "ECONNREFUSED" || (error as Error).message.includes("fetch failed")) {
+      console.error("Ollama connection failed. Is it running on http://localhost:11434?")
+      return "I'm sorry, but I couldn't connect to the local AI service (Ollama). Please make sure Ollama is running on your machine to use the AI chat features. \n\nIf you're testing this in a restricted environment, you might need to configure a remote AI provider like OpenAI or Gemini."
+    }
+
     console.error("AI generation error:", error)
     throw error
   }

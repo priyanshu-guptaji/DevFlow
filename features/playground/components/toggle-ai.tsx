@@ -45,6 +45,10 @@ interface ToggleAIProps {
   suggestionLoading: boolean;
   loadingProgress?: number;
   activeFeature?: string;
+  activeFile?: { name: string; content: string };
+  cursorPosition?: { line: number; column: number };
+  onInsertCode?: (code: string, fileName?: string, position?: { line: number; column: number }) => void;
+  onRunCode?: (code: string, language: string) => void;
 }
 
 const ToggleAI: React.FC<ToggleAIProps> = ({
@@ -54,25 +58,16 @@ const ToggleAI: React.FC<ToggleAIProps> = ({
   suggestionLoading,
   loadingProgress = 0,
   activeFeature,
+  activeFile,
+  cursorPosition,
+  onInsertCode,
+  onRunCode,
 }) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
 
-  // Dummy handler for code insertion from AI chat panel
-  const handleInsertCode = (code: string, fileName?: string, position?: { line: number; column: number }) => {
-    // TODO: Implement actual code insertion logic
-    // For now, just log the code and info
-    console.log("Insert code:", { code, fileName, position });
-    // You can add your integration with the editor here
-  };
-
-  // Dummy handler for running code from AI chat panel
-  const handleRunCode = (code: string, language: string) => {
-    console.log("Run code:", { code, language });
-  };
-
-  // Dummy activeFile and cursorPosition for demonstration
-  const activeFile = { name: "example.ts", content: "// file content" };
-  const cursorPosition = { line: 1, column: 1 };
+  // Dummy fallback for demonstration if props are missing
+  const currentFile = activeFile || { name: "example.ts", content: "// file content" };
+  const currentCursor = cursorPosition || { line: 1, column: 1 };
 
   return (
     <>
@@ -195,12 +190,12 @@ const ToggleAI: React.FC<ToggleAIProps> = ({
       <AIChatSidePanel
         isOpen={isChatOpen}
         onClose={() => setIsChatOpen(false)}
-        onInsertCode={handleInsertCode}
-        onRunCode={handleRunCode}
-        activeFileName={activeFile?.name}
-        activeFileContent={activeFile?.content}
-        activeFileLanguage="TypeScript" // Assuming TypeScript as the language
-        cursorPosition={cursorPosition}
+        onInsertCode={onInsertCode}
+        onRunCode={onRunCode}
+        activeFileName={currentFile?.name}
+        activeFileContent={currentFile?.content}
+        activeFileLanguage={currentFile?.name.split('.').pop() === 'ts' ? 'TypeScript' : 'JavaScript'}
+        cursorPosition={currentCursor}
         theme="dark"
       />
     </>

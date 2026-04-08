@@ -14,15 +14,16 @@ interface TerminalWrapperProps {
   webContainerInstance: WebContainer | null;
   theme?: "dark" | "light";
   className?: string;
+  onReady?: (methods: { writeToTerminal: (data: string) => void }) => void;
 }
 
 const TerminalWrapper = forwardRef<{ writeToTerminal: (data: string) => void }, TerminalWrapperProps>(
-  ({ webContainerInstance, theme = "dark", className }, ref) => {
-    const terminalRef = useRef<any>(null);
+  ({ webContainerInstance, theme = "dark", className, onReady }, ref) => {
+    const terminalMethodsRef = useRef<{ writeToTerminal: (data: string) => void } | null>(null);
 
     const writeToTerminal = useCallback((data: string) => {
-      if (terminalRef.current) {
-        terminalRef.current.writeToTerminal(data);
+      if (terminalMethodsRef.current) {
+        terminalMethodsRef.current.writeToTerminal(data);
       }
     }, []);
 
@@ -30,9 +31,16 @@ const TerminalWrapper = forwardRef<{ writeToTerminal: (data: string) => void }, 
       writeToTerminal,
     }), [writeToTerminal]);
 
+    const handleTerminalReady = useCallback((methods: { writeToTerminal: (data: string) => void }) => {
+      terminalMethodsRef.current = methods;
+      if (onReady) {
+        onReady(methods);
+      }
+    }, [onReady]);
+
     return (
       <TerminalComponent
-        ref={terminalRef}
+        onReady={handleTerminalReady}
         webContainerInstance={webContainerInstance}
         theme={theme}
         className={className}
@@ -76,11 +84,25 @@ const WebContainerPreview = forwardRef<HTMLDivElement, WebContainerPreviewProps>
   const [isSetupInProgress, setIsSetupInProgress] = useState(false);
   
   // Ref to access terminal wrapper methods
-  const terminalWrapperRef = useRef<{ writeToTerminal: (data: string) => void } | null>(null);
+  const terminalMethodsRef = useRef<{ writeToTerminal: (data: string) => void } | null>(null);
+  const pendingMessagesRef = useRef<string[]>([]);
 
   const writeToTerminal = useCallback((data: string) => {
-    if (terminalWrapperRef.current) {
-      terminalWrapperRef.current.writeToTerminal(data);
+    if (terminalMethodsRef.current) {
+      terminalMethodsRef.current.writeToTerminal(data);
+    } else {
+      // Queue message for when terminal is ready
+      pendingMessagesRef.current.push(data);
+    }
+  }, []);
+
+  // Flush pending messages when terminal is ready
+  const flushPendingMessages = useCallback(() => {
+    while (pendingMessagesRef.current.length > 0) {
+      const msg = pendingMessagesRef.current.shift();
+      if (msg && terminalMethodsRef.current) {
+        terminalMethodsRef.current.writeToTerminal(msg);
+      }
     }
   }, []);
 
@@ -104,7 +126,7 @@ const WebContainerPreview = forwardRef<HTMLDivElement, WebContainerPreviewProps>
   useEffect(() => {
     async function setupContainer() {
       // Don't run setup if it's already complete or in progress
-      if (!instance || isSetupComplete || isSetupInProgress) return;
+      if (!instance || !templateData || isSetupComplete || isSetupInProgress) return;
 
       try {
         setIsSetupInProgress(true);
@@ -145,9 +167,13 @@ const WebContainerPreview = forwardRef<HTMLDivElement, WebContainerPreviewProps>
         
         // Write to terminal
         writeToTerminal("🔄 Transforming template data...\r\n");
+        writeToTerminal(`📋 Root folder: ${templateData?.folderName}\r\n`);
 
         // @ts-ignore
         const files = transformToWebContainerFormat(templateData);
+        
+        // Debug: Log the transformed files structure
+        writeToTerminal(`📋 Transformed structure preview: ${JSON.stringify(files).substring(0, 800)}\r\n`);
 
         setLoadingState((prev) => ({
           ...prev,
@@ -345,7 +371,11 @@ const WebContainerPreview = forwardRef<HTMLDivElement, WebContainerPreviewProps>
           {/* Terminal */}
           <div className="flex-1 p-4">
             <TerminalWrapper 
-              ref={terminalWrapperRef}
+              ref={terminalMethodsRef}
+              onReady={(methods) => {
+                terminalMethodsRef.current = methods;
+                flushPendingMessages();
+              }}
               webContainerInstance={instance}
               theme="dark"
               className="h-full"
@@ -366,7 +396,11 @@ const WebContainerPreview = forwardRef<HTMLDivElement, WebContainerPreviewProps>
           {/* Terminal at bottom when preview is ready */}
           <div className="h-64 border-t">
             <TerminalWrapper 
-              ref={terminalWrapperRef}
+              ref={terminalMethodsRef}
+              onReady={(methods) => {
+                terminalMethodsRef.current = methods;
+                flushPendingMessages();
+              }}
               webContainerInstance={instance}
               theme="dark"
               className="h-full"

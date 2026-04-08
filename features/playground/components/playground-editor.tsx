@@ -15,6 +15,8 @@ interface PlaygroundEditorProps {
   onAcceptSuggestion: (editor: any, monaco: any) => void
   onRejectSuggestion: (editor: any) => void
   onTriggerSuggestion: (type: string, editor: any) => void
+  onCursorPositionChange?: (position: { line: number; column: number }) => void
+  onEditorMount?: (editor: any) => void
 }
 
 export const PlaygroundEditor = ({
@@ -27,6 +29,8 @@ export const PlaygroundEditor = ({
   onAcceptSuggestion,
   onRejectSuggestion,
   onTriggerSuggestion,
+  onCursorPositionChange,
+  onEditorMount,
 }: PlaygroundEditorProps) => {
   const editorRef = useRef<any>(null)
   const monacoRef = useRef<Monaco | null>(null)
@@ -70,14 +74,15 @@ export const PlaygroundEditor = ({
             return { items: [] }
           }
 
-          // Check if current position matches suggestion position (with some tolerance)
+          // Check if current position is near the suggestion position
           const currentLine = position.lineNumber
           const currentColumn = position.column
 
+          // Allow more flexibility - if on same line and cursor is at or before suggestion position
           const isPositionMatch =
             currentLine === suggestionPosition.line &&
-            currentColumn >= suggestionPosition.column &&
-            currentColumn <= suggestionPosition.column + 2 // Small tolerance
+            currentColumn >= suggestionPosition.column - 5 && // Allow slight backtracking
+            currentColumn <= suggestionPosition.column + 20 // Allow some characters typed
 
           if (!isPositionMatch) {
             console.log("Position mismatch", {
@@ -318,6 +323,10 @@ export const PlaygroundEditor = ({
     monacoRef.current = monaco
     console.log("Editor instance mounted:", !!editorRef.current)
 
+    if (onEditorMount) {
+      onEditorMount(editor)
+    }
+
     editor.updateOptions({
       ...defaultEditorOptions,
       // Enable inline suggestions but with specific settings to prevent conflicts
@@ -408,9 +417,17 @@ export const PlaygroundEditor = ({
 
     // Listen for cursor position changes to hide suggestions when moving away
     editor.onDidChangeCursorPosition((e: any) => {
-      if (isAcceptingSuggestionRef.current) return
-
       const newPosition = e.position
+      
+      // Notify parent of cursor position change
+      if (onCursorPositionChange) {
+        onCursorPositionChange({
+          line: newPosition.lineNumber,
+          column: newPosition.column
+        })
+      }
+
+      if (isAcceptingSuggestionRef.current) return
 
       // Clear existing suggestion if cursor moved away
       if (currentSuggestionRef.current && !suggestionAcceptedRef.current) {
