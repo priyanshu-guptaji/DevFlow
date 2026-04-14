@@ -129,12 +129,12 @@ Generate suggestion:`
  */
 async function generateSuggestion(prompt: string): Promise<string> {
   try {
-    // Replace this with your actual AI service call
+    // Using qwen2.5-coder which supports code generation well
     const response = await fetch("http://localhost:11434/api/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "codellama:latest",
+        model: "qwen2.5-coder:7b",
         prompt,
         stream: false,
         options: {

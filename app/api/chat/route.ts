@@ -33,22 +33,20 @@ Keep responses concise but comprehensive. Use code blocks with language specific
   const timeoutId = setTimeout(() => controller.abort(), 15000)
 
   try {
+    // Using qwen2.5-coder which works with limited memory
     const response = await fetch("http://localhost:11434/api/generate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "codellama:latest",
+        model: "qwen2.5-coder:7b",
         prompt,
         stream: false,
         options: {
           temperature: 0.7,
           top_p: 0.9,
           max_tokens: 1000,
-          num_predict: 1000,
-          repeat_penalty: 1.1,
-          context_length: 4096,
         },
       }),
       signal: controller.signal,
@@ -107,7 +105,7 @@ Return only the enhanced prompt, nothing else.`
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "codellama:latest",
+        model: "qwen2.5-coder:7b",
         prompt: enhancementPrompt,
         stream: false,
         options: {
