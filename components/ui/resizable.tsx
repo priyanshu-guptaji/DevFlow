@@ -8,9 +8,20 @@ import { cn } from "@/lib/utils"
 // react-resizable-panels exports Group/Panel/Separator (not PanelGroup/PanelResizeHandle)
 const ResizablePanelGroup = ({
   className,
+  direction,
   ...props
-}: React.ComponentProps<typeof ResizablePrimitive.Group>) => (
-  <ResizablePrimitive.Group className={cn("flex h-full w-full", className)} {...props} />
+}: Omit<React.ComponentProps<typeof ResizablePrimitive.Group>, "orientation"> & {
+  direction: "horizontal" | "vertical"
+}) => (
+  <ResizablePrimitive.Group
+    className={cn(
+      "flex h-full w-full",
+      direction === "vertical" && "flex-col",
+      className
+    )}
+    orientation={direction}
+    {...props}
+  />
 )
 
 const ResizablePanel = ResizablePrimitive.Panel
